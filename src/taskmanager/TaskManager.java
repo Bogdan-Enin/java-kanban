@@ -78,13 +78,13 @@ public class TaskManager {
     public void updateTask(Task task) {
         int id = task.getId();
         if (task instanceof Subtask && !subtasks.containsKey(id)) {
-            return; // Убедитесь, что подзадача существует
+            return;
         }
         if (task instanceof Epic && !epics.containsKey(id)) {
-            return; // Убедитесь, что эпик существует
+            return;
         }
         if (task instanceof Task && !tasks.containsKey(id)) {
-            return; // Убедитесь, что задача существует
+            return;
         }
 
         switch (task.getType()) {
@@ -107,17 +107,17 @@ public class TaskManager {
             Subtask subtask = subtasks.get(id);
             int epicId = subtask.getEpicId();
             Epic epic = epics.get(epicId);
-            epic.removeSubtaskId(id); // Удалить из эпика подзадачу
+            epic.removeSubtaskId(id);
             subtasks.remove(id);
             epic.updateStatus(this);
         } else if (epics.containsKey(id)) {
             Epic epic = epics.get(id);
             for (int subtaskId : epic.getSubtaskIds()) {
-                subtasks.remove(subtaskId); // Удалить подзадачи эпика
+                subtasks.remove(subtaskId);
             }
             epics.remove(id);
         } else {
-            System.out.println("Задача не найдена");
+            //ничего не выводит
         }
     }
 }
