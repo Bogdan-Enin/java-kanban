@@ -1,8 +1,17 @@
+package tasks;
+
 public class Task {
     private String name;
     private String description;
     private int id;
     private TaskStatus status;
+
+    public Task(String name, String description, int id, TaskStatus status) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        this.status = status;
+    }
 
     public String getType() {
         return "Task";
@@ -12,13 +21,6 @@ public class Task {
         NEW,
         IN_PROGRESS,
         DONE;
-    }
-
-    public Task(String name, String description, int id, TaskStatus status) {
-        this.name = name;
-        this.description = description;
-        this.id = id;
-        this.status = status;
     }
 
     public TaskStatus getStatus() {
