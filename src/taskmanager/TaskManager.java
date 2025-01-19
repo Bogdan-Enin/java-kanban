@@ -1,5 +1,11 @@
-import java.util.HashMap;
+package taskmanager;
+
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TaskManager {
     private HashMap<Integer, Task> tasks = new HashMap<>();
@@ -7,13 +13,6 @@ public class TaskManager {
     private HashMap<Integer, Epic> epics = new HashMap<>();
 
     private int counter = 0;
-
-    public TaskManager() {
-        this.tasks = new HashMap<>();
-        this.subtasks = new HashMap<>();
-        this.epics = new HashMap<>();
-        this.counter = 0;
-    }
 
     public int getCounter() {
         return counter;
@@ -23,31 +22,15 @@ public class TaskManager {
         this.counter = counter;
     }
 
-    public HashMap<Integer, Epic> getEpics() {
-        return epics;
+    public ArrayList<Epic> getEpics() {
+        return new ArrayList<>(epics.values());
     }
 
-    public void setEpics(HashMap<Integer, Epic> epics) {
-        this.epics = epics;
+    public ArrayList<Subtask> getSubtasks() {
+        return new ArrayList<>(subtasks.values());
     }
 
-    public HashMap<Integer, Subtask> getSubtasks() {
-        return subtasks;
-    }
-
-    public void setSubtasks(HashMap<Integer, Subtask> subtasks) {
-        this.subtasks = subtasks;
-    }
-
-    public HashMap<Integer, Task> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(HashMap<Integer, Task> tasks) {
-        this.tasks = tasks;
-    }
-
-    public ArrayList<Task> getAllTasks() {
+    public ArrayList<Task> getTasks() {
         ArrayList<Task> allTasks = new ArrayList<>();
         allTasks.addAll(tasks.values());
         allTasks.addAll(subtasks.values());
@@ -73,6 +56,10 @@ public class TaskManager {
         }
     }
 
+    public Subtask getSubtaskById(int id) {
+        return subtasks.get(id);
+    }
+
     public void createTask(Task task) {
         counter++;
         task.setId(counter);
@@ -90,6 +77,15 @@ public class TaskManager {
 
     public void updateTask(Task task) {
         int id = task.getId();
+        if (task instanceof Subtask && !subtasks.containsKey(id)) {
+            return; // Убедитесь, что подзадача существует
+        }
+        if (task instanceof Epic && !epics.containsKey(id)) {
+            return; // Убедитесь, что эпик существует
+        }
+        if (task instanceof Task && !tasks.containsKey(id)) {
+            return; // Убедитесь, что задача существует
+        }
 
         switch (task.getType()) {
             case "Subtask":
@@ -108,8 +104,17 @@ public class TaskManager {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
         } else if (subtasks.containsKey(id)) {
+            Subtask subtask = subtasks.get(id);
+            int epicId = subtask.getEpicId();
+            Epic epic = epics.get(epicId);
+            epic.removeSubtaskId(id); // Удалить из эпика подзадачу
             subtasks.remove(id);
+            epic.updateStatus(this);
         } else if (epics.containsKey(id)) {
+            Epic epic = epics.get(id);
+            for (int subtaskId : epic.getSubtaskIds()) {
+                subtasks.remove(subtaskId); // Удалить подзадачи эпика
+            }
             epics.remove(id);
         } else {
             System.out.println("Задача не найдена");
