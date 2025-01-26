@@ -1,7 +1,5 @@
 package tasks;
 
-import taskmanager.TaskManager;
-
 import java.util.ArrayList;
 
 public class Epic extends Task {
@@ -28,27 +26,8 @@ public class Epic extends Task {
         subtaskIds.remove(Integer.valueOf(subtaskId));
     }
 
-    public void updateStatus(TaskManager taskManager) {
-        boolean allNew = true;
-        boolean allDone = true;
-
-        for (int subtaskId : subtaskIds) {
-            Subtask subtask = taskManager.getSubtaskById(subtaskId);
-            if (subtask.getStatus() != TaskStatus.NEW) {
-                allNew = false;
-            }
-            if (subtask.getStatus() != TaskStatus.DONE) {
-                allDone = false;
-            }
-        }
-
-        if(allNew) {
-            setStatus(TaskStatus.NEW);
-        } else if (allDone) {
-            setStatus(TaskStatus.DONE);
-        } else {
-            setStatus(TaskStatus.IN_PROGRESS);
-        }
+    public void clearSubtaskIds() {
+        subtaskIds.clear();
     }
 
     @Override
@@ -56,3 +35,4 @@ public class Epic extends Task {
         return "Epic";
     }
 }
+
